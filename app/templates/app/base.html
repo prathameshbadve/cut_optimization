@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token }}">
+        <title>Cuting Length Optimization</title>
+        <link href="{% static 'app/css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'app/css/bootstrap-icons.css' %}" rel="stylesheet">
+        <link href="{% static 'app/css/styles.css' %}" rel="stylesheet">
+        <style>
+            @font-face {
+                font-display: block;
+                font-family: "bootstrap-icons";
+                src: url("{% static 'app/fonts/bootstrap-icons.woff2' %}") format("woff2"),
+                    url("{% static 'app/fonts/bootstrap-icons.woff' %}") format("woff");
+                font-display: block;
+            }
+        </style>
+        <script src="{% static 'app/js/jquery.min.js' %}"></script>
+
+        {% block head %}
+        {% endblock head %}
+    </head>
+
+    <body>
+        {% include 'app/navbar.html' %}
+
+        <div class="container">
+            <br/>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }} alert-dismissible fade show" id="msg" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    dismissMessages();
+                });
+            </script>
+
+            &nbsp; &nbsp;
+
+            {% block content %}
+            {% endblock content %}
+
+        </div>
+        
+        <script src="{% static 'app/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'app/js/scripts.js' %}"></script>
+
+    </body>
+</html>

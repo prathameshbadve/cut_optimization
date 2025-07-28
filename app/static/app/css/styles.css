@@ -1,0 +1,13 @@
+html {
+    font-size: 14px; /* Adjust font size */
+}
+
+.scrollable-row {
+    max-height: 500px; /* Set the maximum height for the row */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.scrollable-column {
+    max-height: 500px; /* Set the maximum height for the column */
+    overflow-y: auto; /* Enable vertical scrolling */
+}

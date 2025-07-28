@@ -1,0 +1,172 @@
+{% extends 'app/base.html' %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<h1><i class="bi bi-house"></i> Home</h1>
+
+<hr>
+
+<div class="row">
+
+    <div class="col-12 col-md-6">
+
+        <h2>Upload Stock Lengths & Demand Lengths File</h2>
+
+        <form method="POST" enctype="multipart/form-data" id="upload-form">
+            {% csrf_token %}
+
+            {{ form|crispy }}
+
+            <button type="submit" class="btn btn-outline-success">
+                Upload
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+<hr>
+
+{% if stock_lengths %}
+
+<div class="row">
+
+    <div class="col-8 col-md-6">
+
+        <h2>Available Stock Lengths</h2>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Sr. No.</th>
+                    <th scope="col">Stock Length (mm)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for len in stock_lengths %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ len.length }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{% url 'optimize' %}" class="btn btn-outline-primary">
+            Optimize
+        </a>
+    
+    </div>
+
+    <div class="col-16 col-md-6 scrollable-column">
+
+        <h2>Demand Lengths</h2>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Sr. No.</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Cutting Length (mm)</th>
+                    <th scope="col">Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if demand_lengths %}
+                    {% for len in demand_lengths %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ len.code }}</td>
+                            <td>{{ len.length }}</td>
+                            <td>{{ len.qty }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    
+    </div>
+
+</div>
+
+<hr>
+
+{% endif %}
+
+{% if results %}
+
+<div class="row">
+
+    <div class="col-16">
+
+        <div style="display: flex; justify-content: space-between;">
+            <div style="text-align: left;">
+                <h2> Material Requirements Planning</h2>
+            </div>
+
+            <div style="text-align: right;">
+                <a type="button" class="btn btn-outline-success" href="{% url 'download-pdf' %}">
+                    <i class="bi bi-arrow-down"></i> Download Cutting List
+                </a>
+            </div>
+        </div>
+
+        <h3>Pattern Usage by Stock Length</h3>
+        <table class="table table-striped">
+            <tr>
+                <th scope="col">Sr. No.</th>
+                <th scope="col">Stock Length (mm)</th>
+                <th scope="col">Cutting Pattern -> Code-Length: (Number of Cuts)</th>
+                <th scope="col">Bar Count</th>
+                <th scope="col">Waste per Bar (mm)</th>
+            </tr>
+            {% for r in results %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ r.stock_length }}</td>
+                    <td>
+                        {% for key, value in r.pattern.items %}
+                            {{ key }}: ({{ value }}){% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ r.count }}</td>
+                    <td>{{ r.waste }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <br/>
+
+        <h3>Stock Summary</h3>
+        <table class="table table-striped">
+            <tr>
+                <th scope="col">Sr. No.</th>
+                <th scope="col">Stock Length (mm)</th>
+                <th scope="col">Bars Required</th>
+                <th scope="col">Total Waste (mm)</th>
+            </tr>
+            {% for s in stock_summary %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ s.stock_length }}</td>
+                    <td>{{ s.used_count }}</td>
+                    <td>{{ s.waste }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <h3>Total Waste: {{ total_waste }} mm</h3>
+
+    </div>
+
+</div>
+
+<hr>
+
+{% endif %}
+
+{% endblock content %}
